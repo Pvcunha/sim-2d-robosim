@@ -1,7 +1,7 @@
 
 --
 -- RoboSim generator version 3.0.0.202302061258
--- Automatically generated on 31-05-2023 16:59:19
+-- Automatically generated on 31-05-2023 17:16:08
 --
 
 module GoalieSTM
@@ -74,17 +74,23 @@ exports
 	channel startexec, startexec_action
 	
 	-- declaring registerRead/Write datatypes
+	datatype RegisterDataInput = i_worldModel.Bool
+	
 	
 	
 	nametype RegisterOutputs = {||}
 		
-	nametype RegisterInputs = {||}
+	nametype RegisterInputs = {|
+	i_worldModel|}
 	
+	channel registerRead 	: RegisterDataInput
 	
 	-- variable channels
+	channel get_worldModel : Bool
 	
 	-- channel set with all visible events
 	sem__events = {|endexec,terminate
+				,registerRead
 		|}
 
 		-- Nodes --
@@ -161,6 +167,7 @@ exports
 		
 				Cycle =
 					Deadline(
+						(registerRead.i_worldModel?x__ -> SKIP);
 						startexec -> CollectOutputs(SOutputEvents),0);
 					TimeOut_1(terminate -> SKIP,WAIT(cycle_GoalieSTM_GoalieSTM-1);Cycle)
 				
@@ -174,7 +181,7 @@ exports
 		STM(id__,cycle_GoalieSTM_GoalieSTM) = -- RULE: [[stm:StateMachineDef]]_STM^nops : CSPProcess
 		(
 			cycle(cycle_GoalieSTM_GoalieSTM)
-			[| {| endexec,startexec,terminate |} |]
+			[| {| endexec,registerRead,startexec,terminate |} |]
 			( 
 				(
 					(
@@ -196,7 +203,7 @@ exports
 		STM_VS_O(id__,cycle_GoalieSTM_GoalieSTM) = -- RULE: [[stm:StateMachineDef]]_STM^nops : CSPProcess
 		(
 			cycle(cycle_GoalieSTM_GoalieSTM)
-			[| {| endexec,startexec,terminate |} |]
+			[| {| endexec,registerRead,startexec,terminate |} |]
 			( 
 				(
 					(
@@ -443,21 +450,28 @@ exports
 		-- Shared memory
 		-- Shared memory variables
 		
+		Memory_worldModel(x__) = (
+			get_worldModel!x__ -> Memory_worldModel(x__)
+			[]
+			registerRead.i_worldModel?x__ -> Memory_worldModel(x__)
+			[]
+			terminate -> SKIP
+		)
 		
 		-- sharedVarMemory process
 		sharedVarMemory(id__,cycle_GoalieSTM_GoalieSTM) = (
 		 (terminate -> SKIP
 		 )
 		 [| { terminate } |]
-		 (terminate -> SKIP
+		 (Memory_worldModel(false)
 		 )
 		)
 		
-		sharedVarSync = union({||},
+		sharedVarSync = union({|get_worldModel|},
 			  {||}
 			 )
 		
-		sharedVarHide = union({||},
+		sharedVarHide = union({|get_worldModel|},
 			  {||}
 			 )
 		

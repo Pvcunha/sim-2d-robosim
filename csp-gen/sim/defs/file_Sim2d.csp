@@ -1,7 +1,7 @@
 
 --
 -- RoboSim generator version 3.0.0.202302061258
--- Automatically generated on 31-05-2023 16:59:19
+-- Automatically generated on 31-05-2023 17:16:08
 --
 
 
@@ -19,20 +19,24 @@ exports
 	
 	-- inputs, evars, rvars and outputs as calculated internally
 	-- outputs = {}
-	-- inputs = {}
+	-- inputs = {
+	--	(Goalie::worldModel,stm_ref0::worldModel)
+	--	 }
 	-- evars = {}
 	-- dvars = {}
 	
 	-- declaring registerRead/Write datatypes
-	datatype RegisterDataInput = i_UpdateCycle.Bool
+	datatype RegisterDataInput = i_worldModel.Bool
 	
-	datatype RegisterDataOutput = o_UpdateCycle
+	datatype RegisterDataOutput = o_worldModel
 	
 	
 	nametype RegisterOutputs = {||}
 		
-	nametype RegisterInputs = {||}
+	nametype RegisterInputs = {|
+	i_worldModel|}
 	
+	channel registerRead 	: RegisterDataInput
 	
 	channel endexec, terminate
 	
@@ -41,6 +45,7 @@ exports
 	
 	-- channel set with all visible events
 	sem__events = {|endexec,terminate
+	,registerRead
 	|}
 	
 	module stm_ref0
@@ -113,17 +118,23 @@ exports
 		channel startexec, startexec_action
 		
 		-- declaring registerRead/Write datatypes
+		datatype RegisterDataInput = i_worldModel.Bool
+		
 		
 		
 		nametype RegisterOutputs = {||}
 			
-		nametype RegisterInputs = {||}
+		nametype RegisterInputs = {|
+		i_worldModel|}
 		
+		channel registerRead 	: RegisterDataInput
 		
 		-- variable channels
+		channel get_worldModel : Bool
 		
 		-- channel set with all visible events
 		sem__events = {|endexec,terminate
+					,registerRead
 			|}
 	
 			-- Nodes --
@@ -200,6 +211,7 @@ exports
 			
 					Cycle =
 						Deadline(
+							(registerRead.i_worldModel?x__ -> SKIP);
 							startexec -> CollectOutputs(SOutputEvents),0);
 						TimeOut_1(terminate -> SKIP,WAIT(cycle_GoalieSTM_GoalieSTM-1);Cycle)
 					
@@ -213,7 +225,7 @@ exports
 			STM(id__,cycle_GoalieSTM_GoalieSTM) = -- RULE: [[stm:StateMachineDef]]_STM^nops : CSPProcess
 			(
 				cycle(cycle_GoalieSTM_GoalieSTM)
-				[| {| endexec,startexec,terminate |} |]
+				[| {| endexec,registerRead,startexec,terminate |} |]
 				( 
 					(
 						(
@@ -235,7 +247,7 @@ exports
 			STM_VS_O(id__,cycle_GoalieSTM_GoalieSTM) = -- RULE: [[stm:StateMachineDef]]_STM^nops : CSPProcess
 			(
 				cycle(cycle_GoalieSTM_GoalieSTM)
-				[| {| endexec,startexec,terminate |} |]
+				[| {| endexec,registerRead,startexec,terminate |} |]
 				( 
 					(
 						(
@@ -482,21 +494,28 @@ exports
 			-- Shared memory
 			-- Shared memory variables
 			
+			Memory_worldModel(x__) = (
+				get_worldModel!x__ -> Memory_worldModel(x__)
+				[]
+				registerRead.i_worldModel?x__ -> Memory_worldModel(x__)
+				[]
+				terminate -> SKIP
+			)
 			
 			-- sharedVarMemory process
 			sharedVarMemory(id__,cycle_GoalieSTM_GoalieSTM) = (
 			 (terminate -> SKIP
 			 )
 			 [| { terminate } |]
-			 (terminate -> SKIP
+			 (Memory_worldModel(false)
 			 )
 			)
 			
-			sharedVarSync = union({||},
+			sharedVarSync = union({|get_worldModel|},
 				  {||}
 				 )
 			
-			sharedVarHide = union({||},
+			sharedVarHide = union({|get_worldModel|},
 				  {||}
 				 )
 			
@@ -524,8 +543,8 @@ exports
 			Deadline(
 			-- read inputs from the controller and pass to state machines
 			(
-			((registerRead.i_UpdateCycle?x__ ->
-				SKIP))
+			((registerRead.i_worldModel?x__ ->
+				((stm_ref0::registerRead.stm_ref0::i_worldModel!x__ -> SKIP))))
 			-- ensure state machines read the values being communicated via evars
 					);
 			-- synchronize on events related to evars to erase memory
@@ -567,7 +586,7 @@ exports
 				 	memoryComp(id__)
 				 	)\{||}
 					[| {| 	terminate,tock,
-							stm_ref0::endexec|} |]
+							stm_ref0::endexec,stm_ref0::registerRead|} |]
 					-- (Rule 9) composeMachines(...) : CSPProcess
 				 	((let
 				 		cycle_GoalieSTM_GoalieSTM = cycle_Goalie_Goalie
@@ -577,7 +596,7 @@ exports
 				 		[[stm_ref0::terminate <- terminate]]
 				 	)
 				 	)
-				) \ {|	stm_ref0::endexec |}
+				) \ {|	stm_ref0::endexec,stm_ref0::registerRead |}
 			) [| {terminate} |> SKIP
 		)
 	)
@@ -596,7 +615,7 @@ exports
 				 	memoryComp(id__)
 				 	)\{||}
 					[| {| 	terminate,tock,
-							stm_ref0::endexec|} |]
+							stm_ref0::endexec,stm_ref0::registerRead|} |]
 					-- (Rule 9) composeMachines(...) : CSPProcess
 				 	((let
 				 		cycle_GoalieSTM_GoalieSTM = cycle_Goalie_Goalie
@@ -606,7 +625,7 @@ exports
 				 		[[stm_ref0::terminate <- terminate]]
 				 	)
 				 	)
-				) \ {|	stm_ref0::endexec |}
+				) \ {|	stm_ref0::endexec,stm_ref0::registerRead |}
 			) [| {terminate} |> SKIP
 		)
 	)
@@ -683,17 +702,23 @@ exports
 	channel startexec, startexec_action
 	
 	-- declaring registerRead/Write datatypes
+	datatype RegisterDataInput = i_worldModel.Bool
+	
 	
 	
 	nametype RegisterOutputs = {||}
 		
-	nametype RegisterInputs = {||}
+	nametype RegisterInputs = {|
+	i_worldModel|}
 	
+	channel registerRead 	: RegisterDataInput
 	
 	-- variable channels
+	channel get_worldModel : Bool
 	
 	-- channel set with all visible events
 	sem__events = {|endexec,terminate
+				,registerRead
 		|}
 
 		-- Nodes --
@@ -770,6 +795,7 @@ exports
 		
 				Cycle =
 					Deadline(
+						(registerRead.i_worldModel?x__ -> SKIP);
 						startexec -> CollectOutputs(SOutputEvents),0);
 					TimeOut_1(terminate -> SKIP,WAIT(cycle_GoalieSTM_GoalieSTM-1);Cycle)
 				
@@ -783,7 +809,7 @@ exports
 		STM(id__,cycle_GoalieSTM_GoalieSTM) = -- RULE: [[stm:StateMachineDef]]_STM^nops : CSPProcess
 		(
 			cycle(cycle_GoalieSTM_GoalieSTM)
-			[| {| endexec,startexec,terminate |} |]
+			[| {| endexec,registerRead,startexec,terminate |} |]
 			( 
 				(
 					(
@@ -805,7 +831,7 @@ exports
 		STM_VS_O(id__,cycle_GoalieSTM_GoalieSTM) = -- RULE: [[stm:StateMachineDef]]_STM^nops : CSPProcess
 		(
 			cycle(cycle_GoalieSTM_GoalieSTM)
-			[| {| endexec,startexec,terminate |} |]
+			[| {| endexec,registerRead,startexec,terminate |} |]
 			( 
 				(
 					(
@@ -1052,21 +1078,28 @@ exports
 		-- Shared memory
 		-- Shared memory variables
 		
+		Memory_worldModel(x__) = (
+			get_worldModel!x__ -> Memory_worldModel(x__)
+			[]
+			registerRead.i_worldModel?x__ -> Memory_worldModel(x__)
+			[]
+			terminate -> SKIP
+		)
 		
 		-- sharedVarMemory process
 		sharedVarMemory(id__,cycle_GoalieSTM_GoalieSTM) = (
 		 (terminate -> SKIP
 		 )
 		 [| { terminate } |]
-		 (terminate -> SKIP
+		 (Memory_worldModel(false)
 		 )
 		)
 		
-		sharedVarSync = union({||},
+		sharedVarSync = union({|get_worldModel|},
 			  {||}
 			 )
 		
-		sharedVarHide = union({||},
+		sharedVarHide = union({|get_worldModel|},
 			  {||}
 			 )
 		
