@@ -1,4 +1,4 @@
--- generate --
+-- OPERATION BOUNDS
 
 -- MODULE CONSTANTS
 
@@ -9,19 +9,16 @@
 -- OPERATION CONSTANTS
 
 -- BASIC TYPES
-
 -- generate nat
 nametype core_nat = union({0..2},{calc_type_min(Union(
 			{}))..calc_type_max(Union({}))})
-
--- generate core_clock_type
-nametype core_clock_type = {0..10}
-
--- BASIC FUNCTIONS
-
+-- generate int
+nametype core_int = union({ -2..2},{calc_type_min(Union(
+			{}))..calc_type_max(Union({}))})
 -- generate string
 nametype core_string = LSeq(Char,2)
-
+-- generate boolean
+nametype core_boolean = Bool
 -- generate real
 nametype core_real = union({ -2..2},{calc_type_min(Union(
 			{}))..calc_type_max(Union({}))}) 
@@ -30,49 +27,32 @@ nametype core_real = union({ -2..2},{calc_type_min(Union(
 
 
 -- CLOCKS
+-- generate core_clock_type
+nametype core_clock_type = {0..10}
 
--- generate int
-nametype core_int = union({ -2..2},{calc_type_min(Union(
-			{}))..calc_type_max(Union({}))})
+-- BASIC FUNCTIONS			
+-- generate Plus
+Plus(e1,e2,T) = if member(e1+e2,T) then e1+e2 else e1
 
--- generate -- OPERATION BOUNDS
+-- generate Minus
+Minus(e1,e2,T) = if member(e1-e2,T) then e1-e2 else e1
 
--- MODULE CONSTANTS
-
--- CONTROLLER CONSTANTS
-
--- STATEMACHINE CONSTANTS
-
--- OPERATION CONSTANTS
-
--- BASIC TYPES
+-- generate Mult
+Mult(e1,e2,T) = if member(e1*e2,T) then e1*e2 else e1
 
 -- generate Div
 Div(e1,e2,T) = if member(e1/e2,T) then e1/e2 else e1
+
+-- generate Modulus
+Modulus(e1,e2,T) = if member(e1%e2,T) then e1%e2 else e1
 
 -- generate Neg
 Neg(e1,T) = if member(-e1,T) then -e1 else e1
 
 -- CYCLE DEFINITIONS
-
--- generate boolean
-nametype core_boolean = Bool
-
--- generate Mult
-Mult(e1,e2,T) = if member(e1*e2,T) then e1*e2 else e1
-
--- generate Modulus
-Modulus(e1,e2,T) = if member(e1%e2,T) then e1%e2 else e1
-
--- generate cycle_Goalie_Goalie
-cycle_Goalie_Goalie = 1
-
--- generate Plus
-Plus(e1,e2,T) = if member(e1+e2,T) then e1+e2 else e1
-
--- generate cycle_GoalieSTM_GoalieSTM
-cycle_GoalieSTM_GoalieSTM = 1
-
--- generate Minus
-Minus(e1,e2,T) = if member(e1-e2,T) then e1-e2 else e1
-
+-- generate cycle_Sim2DModule_Sim2DModule
+cycle_Sim2DModule_Sim2DModule = 1
+-- generate cycle_Kicker_Kicker
+cycle_Kicker_Kicker = 1
+-- generate cycle_KickerStm_KickerStm
+cycle_KickerStm_KickerStm = 1

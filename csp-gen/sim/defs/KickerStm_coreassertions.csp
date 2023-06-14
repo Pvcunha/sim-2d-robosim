@@ -1,0 +1,36 @@
+
+--
+-- RoboSim generator version 3.0.0.202302061258
+-- Automatically generated on 14-06-2023 19:09:34
+--
+
+include "core_timed_defs.csp"
+include "core_defs.csp"
+include "file_Sim2d_defs.csp"
+include "state_timed_defs.csp"
+include "KickerStm.csp"
+include "robochart_defs.csp"
+include "../instantiations.csp"
+
+transparent wbisim
+channel r__
+-- generate KickerStm
+P_KickerStm = let
+	cycle_KickerStm_KickerStm = 1
+	id__ = 0
+	
+	
+	
+within
+	KickerStm::O__(
+		id__
+	)
+assert P_KickerStm :[deadlock-free]	
+assert P_KickerStm;RUN({r__}) :[deadlock-free]
+assert P_KickerStm :[deterministic]
+assert P_KickerStm :[divergence-free]
+-- timed deadlock free
+assert prioritise(P_KickerStm[[tock<-tock,tock<-tock']],<diff(Events,{tock',tock}),{tock}>)\{tock} :[divergence free [FD]]
+
+-- timelock free
+assert RUN({tock}) ||| CHAOS(diff(Events,{|tock|})) [F= P_KickerStm
