@@ -2,8 +2,20 @@ datatype Point {
 	x: int
 	y: int
 }
+
+datatype GameMode {
+	gameMode: string
+}
+
+datatype WorldModel {
+	gameMode: GameMode
+	canShoot: boolean
+	isKickable: boolean
+	ball: Point
+}
+
 interface UpdateWorldI {
-	event updateWorldModel
+	event updateWorldModel: WorldModel
 }
 
 interface MovementI {
@@ -12,15 +24,17 @@ interface MovementI {
 	doDribble ( )
 }
 
-interface KickI {
-	doKick()
+interface ShootI {
+	doShoot()
 canKickToGoal ( )
-	var kicked : boolean
+	var 
+shoot : boolean
 }
 
 interface WorldModelI {
 	var ball: Point
 	var kickable: boolean
+	var canShoot : boolean
 }
 
 controller Kicker {
@@ -30,87 +44,94 @@ controller Kicker {
 	cycleDef cycle == 1
 
 	connection Kicker on updateWorldModel to stm_ref0 on updateWorldModel
-requires MovementI requires KickI requires WorldModelI }
+requires MovementI requires ShootI requires WorldModelI }
 
 stm KickerStm {
+	const wm : WorldModel
 	input context {  uses UpdateWorldI requires WorldModelI }
-	output context { requires KickI requires MovementI }
+	output context { requires ShootI requires MovementI }
 	cycleDef cycle == 1
 	initial i0
 	final f0
 
 	state SGoToBall {
-		entry $ doMove ( $ ball )
+		entry $ doMove ( $ ball)
 	}
-	state DMovingToBall {
-	}
+
 	junction j0
-	state SKick {
-	entry $ doKick ( )
+	state SShoot {
+	entry $ doShoot ( )
 	}
-	state DKicking {
-	}
+
 	junction j1
 	state SDribble {
 		entry $ doDribble ( )
 	}
-	junction j2
+	state ScheckGameMode {
+	}
 
-	transition t0 {
-		from i0
-		to SGoToBall
-	}
-	transition t1 {
-		from SGoToBall
-		to DMovingToBall
-	}
-	transition t2 {
-		from DMovingToBall
-		to j0
-		exec
-	}
 	transition t3 {
 		from j0
-		to DMovingToBall
-	condition not $ kickable
+		to ScheckGameMode
+	condition 
+	not $ kickable
+		action exec
 	}
 	transition t4 {
 		from j0
-		to SKick
+		to SShoot
 	condition $ kickable
-	}
-	transition t5 {
-		from SKick
-		to DKicking
-	}
-	transition t6 {
-		from DKicking
-		to j1
-		exec
 	}
 	transition t7 {
 		from j1
-		to f0
+		to ScheckGameMode
+	condition $ canShoot
+		action exec
 	}
 	transition t8 {
 		from j1
 		to SDribble
+	condition not $ canShoot
+	}
+	transition t0 {
+		from i0
+		to ScheckGameMode
+	}
+	transition t11 {
+		from ScheckGameMode
+		to SGoToBall
+		condition 
+	$  updateWorldModel ? wm
+	}
+	transition t12 {
+		from ScheckGameMode
+		to ScheckGameMode
+		condition not $ updateWorldModel
+		action exec
+	}
+	transition t13 {
+		from ScheckGameMode
+		to f0
 	}
 	transition t9 {
 		from SDribble
-		to j2
+		to ScheckGameMode
 		exec
 	}
-	transition t10 {
-		from j2
-		to SGoToBall
+transition t5 {
+		from SShoot
+		to j1
+	}
+	transition t1 {
+		from SGoToBall
+		to j0
 	}
 }
 
 module Sim2DModule {
 	robotic platform Servidor {
 		provides MovementI
-		provides KickI
+		provides ShootI
 		
 	uses UpdateWorldI provides WorldModelI }
 

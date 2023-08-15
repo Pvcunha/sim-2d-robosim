@@ -5,6 +5,10 @@
 -- CONTROLLER CONSTANTS
 
 -- STATEMACHINE CONSTANTS
+-- generate const_KickerStm_wm
+const_KickerStm_wm = ((""),true,true,(0,0))
+-- generate const_Kicker_stm_ref0_wm
+const_Kicker_stm_ref0_wm = ((""),true,true,(0,0))
 
 -- OPERATION CONSTANTS
 

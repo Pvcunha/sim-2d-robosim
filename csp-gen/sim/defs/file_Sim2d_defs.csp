@@ -1,7 +1,7 @@
 
 --
 -- RoboSim generator version 3.0.0.202302061258
--- Automatically generated on 14-06-2023 19:09:34
+-- Automatically generated on 14-08-2023 22:52:45
 --
 
 -- data definitions used by platform:/resource/sim-2d/Sim2d.rst
@@ -10,5 +10,17 @@ Point_x((x,y)) = x
 update_Point_x((x,y),v__) = (v__,y)
 Point_y((x,y)) = y
 update_Point_y((x,y),v__) = (x,v__)
+nametype GameMode = (core_string)
+GameMode_gameMode((gameMode)) = gameMode
+update_GameMode_gameMode((gameMode),v__) = (v__)
+nametype WorldModel = (GameMode,core_boolean,core_boolean,Point)
+WorldModel_gameMode((gameMode,canShoot,isKickable,ball)) = gameMode
+update_WorldModel_gameMode((gameMode,canShoot,isKickable,ball),v__) = (v__,canShoot,isKickable,ball)
+WorldModel_canShoot((gameMode,canShoot,isKickable,ball)) = canShoot
+update_WorldModel_canShoot((gameMode,canShoot,isKickable,ball),v__) = (gameMode,v__,isKickable,ball)
+WorldModel_isKickable((gameMode,canShoot,isKickable,ball)) = isKickable
+update_WorldModel_isKickable((gameMode,canShoot,isKickable,ball),v__) = (gameMode,canShoot,v__,ball)
+WorldModel_ball((gameMode,canShoot,isKickable,ball)) = ball
+update_WorldModel_ball((gameMode,canShoot,isKickable,ball),v__) = (gameMode,canShoot,isKickable,v__)
 
 	

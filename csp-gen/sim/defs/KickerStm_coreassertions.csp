@@ -1,7 +1,7 @@
 
 --
 -- RoboSim generator version 3.0.0.202302061258
--- Automatically generated on 14-06-2023 19:09:34
+-- Automatically generated on 14-08-2023 22:52:45
 --
 
 include "core_timed_defs.csp"
@@ -23,7 +23,8 @@ P_KickerStm = let
 	
 within
 	KickerStm::O__(
-		id__
+		id__,
+		const_KickerStm_wm
 	)
 assert P_KickerStm :[deadlock-free]	
 assert P_KickerStm;RUN({r__}) :[deadlock-free]
