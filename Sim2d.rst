@@ -47,7 +47,7 @@ controller Kicker {
 requires MovementI requires ShootI requires WorldModelI }
 
 stm KickerStm {
-	const wm : WorldModel
+	var wm : WorldModel
 	input context {  uses UpdateWorldI requires WorldModelI }
 	output context { requires ShootI requires MovementI }
 	cycleDef cycle == 1
@@ -55,7 +55,7 @@ stm KickerStm {
 	final f0
 
 	state SGoToBall {
-		entry $ doMove ( $ ball)
+		entry $ doMove ( wm.ball )
 	}
 
 	junction j0
@@ -63,12 +63,13 @@ stm KickerStm {
 	entry $ doShoot ( )
 	}
 
-	junction j1
 	state SDribble {
 		entry $ doDribble ( )
 	}
 	state ScheckGameMode {
 	}
+	junction j2
+	junction j1
 
 	transition t3 {
 		from j0
@@ -79,19 +80,8 @@ stm KickerStm {
 	}
 	transition t4 {
 		from j0
-		to SShoot
-	condition $ kickable
-	}
-	transition t7 {
-		from j1
-		to ScheckGameMode
-	condition $ canShoot
-		action exec
-	}
-	transition t8 {
-		from j1
-		to SDribble
-	condition not $ canShoot
+		to j2
+	condition wm . isKickable
 	}
 	transition t0 {
 		from i0
@@ -115,16 +105,30 @@ stm KickerStm {
 	}
 	transition t9 {
 		from SDribble
-		to ScheckGameMode
-		exec
-	}
-transition t5 {
-		from SShoot
 		to j1
 	}
 	transition t1 {
 		from SGoToBall
 		to j0
+	}
+transition t2 {
+		from j2
+		to SDribble
+		condition not wm . canShoot
+	}
+	transition t6 {
+		from j2
+		to SShoot
+		condition wm . canShoot
+	}
+	transition t5 {
+		from SShoot
+		to j1
+	}
+	transition t7 {
+		from j1
+		to ScheckGameMode
+		action exec
 	}
 }
 
