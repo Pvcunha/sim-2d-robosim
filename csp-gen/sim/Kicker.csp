@@ -1,0 +1,15 @@
+
+--
+-- RoboSim generator version 3.0.0.202302061258
+-- Automatically generated on 04-09-2023 22:26:44
+--
+
+include "defs/Kicker_defs.csp"
+include "defs/state_timed_defs.csp"
+include "defs/Kicker.csp"
+include "defs/robochart_defs.csp"
+include "defs/Goalie_defs.csp"
+include "defs/core_defs.csp"
+include "defs/core_timed_defs.csp"
+include "instantiations.csp"
+channel r__

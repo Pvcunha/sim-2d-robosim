@@ -1,14 +1,14 @@
 
 --
 -- RoboSim generator version 3.0.0.202302061258
--- Automatically generated on 14-08-2023 22:52:45
+-- Automatically generated on 04-09-2023 22:58:06
 --
 
 include "defs/state_timed_defs.csp"
-include "defs/file_Sim2d.csp"
 include "defs/robochart_defs.csp"
-include "defs/file_Sim2d_defs.csp"
+include "defs/Goalie_defs.csp"
 include "defs/core_defs.csp"
 include "defs/core_timed_defs.csp"
+include "defs/Goalie.csp"
 include "instantiations.csp"
 channel r__

@@ -1,3 +1,5 @@
+package Kicker
+
 datatype Point {
 	x: int
 	y: int
@@ -48,7 +50,7 @@ stm KickerStm {
 	final f0
 
 	state SGoToBall {
-		entry $ doMove ( wm.ball )
+		entry $ doMove ( wm . ball )
 	}
 
 	junction j0
@@ -78,13 +80,16 @@ stm KickerStm {
 		from sUpdateWorldModel
 		to j3
 		condition 
-	$  updateWorldModel ? wm
+	
+	$   updateWorldModel ? wm
 	}
 	transition t12 {
 		from sUpdateWorldModel
 		to sUpdateWorldModel
-		condition not $ updateWorldModel
-		action exec
+		condition 
+		not $ updateWorldModel
+		action 
+	exec
 	}
 	transition t9 {
 		from SDribble
@@ -126,8 +131,10 @@ transition t8 {
 transition t3 {
 		from j0
 		to sUpdateWorldModel
-		condition not wm . isKickable
-		action exec
+		condition 
+		not wm . isKickable
+		action 
+	exec
 	}
 }
 

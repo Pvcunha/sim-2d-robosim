@@ -1,28 +1,80 @@
--- OPERATION BOUNDS
+-- generate string
+nametype core_string = LSeq(Char,2)
+
+-- generate const_KickerStm_wm
+const_KickerStm_wm = ((""),true,true,(0,0))
+
+-- generate cycle_Goalie_Sim2DModule_Sim2DModule
+cycle_Goalie_Sim2DModule_Sim2DModule = 1
+
+-- generate -- OPERATION BOUNDS
 
 -- MODULE CONSTANTS
 
 -- CONTROLLER CONSTANTS
 
 -- STATEMACHINE CONSTANTS
--- generate const_KickerStm_wm
-const_KickerStm_wm = ((""),true,true,(0,0))
+
+-- generate Kicker_canShootToGoal
+Kicker_canShootToGoal() = true
+-- CYCLE DEFINITIONS
+
+-- generate canShootToGoal
+canShootToGoal() = true
+-- CYCLE DEFINITIONS
+
+-- generate cycle_Goalie_Goalie_Goalie
+cycle_Goalie_Goalie_Goalie = 1
+
+-- generate cycle_KickerStm_KickerStm
+cycle_KickerStm_KickerStm = 1
+
+-- generate cycle_Goalie_GoalieStm_GoalieStm
+cycle_Goalie_GoalieStm_GoalieStm = 1
+
+-- generate cycle_Kicker_KickerStm_KickerStm
+cycle_Kicker_KickerStm_KickerStm = 1
+
+-- generate cycle_Goalie_Goalie
+cycle_Goalie_Goalie = 1
+
 -- generate const_Kicker_stm_ref0_wm
 const_Kicker_stm_ref0_wm = ((""),true,true,(0,0))
 
 -- OPERATION CONSTANTS
 
 -- BASIC TYPES
+
+-- generate Plus
+Plus(e1,e2,T) = if member(e1+e2,T) then e1+e2 else e1
+
+-- generate cycle_Kicker_Sim2DModule_Sim2DModule
+cycle_Kicker_Sim2DModule_Sim2DModule = 1
+
+-- generate cycle_Kicker_Kicker
+cycle_Kicker_Kicker = 1
+
+-- generate --
+
+-- MODULE CONSTANTS
+
+-- CONTROLLER CONSTANTS
+
+-- STATEMACHINE CONSTANTS
+
+-- OPERATION CONSTANTS
+
+-- BASIC TYPES
+
 -- generate nat
 nametype core_nat = union({0..2},{calc_type_min(Union(
 			{}))..calc_type_max(Union({}))})
--- generate int
-nametype core_int = union({ -2..2},{calc_type_min(Union(
-			{}))..calc_type_max(Union({}))})
--- generate string
-nametype core_string = LSeq(Char,2)
--- generate boolean
-nametype core_boolean = Bool
+
+-- generate core_clock_type
+nametype core_clock_type = {0..10}
+
+-- BASIC FUNCTIONS
+
 -- generate real
 nametype core_real = union({ -2..2},{calc_type_min(Union(
 			{}))..calc_type_max(Union({}))}) 
@@ -31,32 +83,37 @@ nametype core_real = union({ -2..2},{calc_type_min(Union(
 
 
 -- CLOCKS
--- generate core_clock_type
-nametype core_clock_type = {0..10}
 
--- BASIC FUNCTIONS			
--- generate Plus
-Plus(e1,e2,T) = if member(e1+e2,T) then e1+e2 else e1
+-- generate cycle_GoalieStm_GoalieStm
+cycle_GoalieStm_GoalieStm = 1
 
--- generate Minus
-Minus(e1,e2,T) = if member(e1-e2,T) then e1-e2 else e1
+-- generate cycle_Sim2DModule_Sim2DModule
+cycle_Sim2DModule_Sim2DModule = 1
 
--- generate Mult
-Mult(e1,e2,T) = if member(e1*e2,T) then e1*e2 else e1
+-- generate int
+nametype core_int = union({ -2..2},{calc_type_min(Union(
+			{}))..calc_type_max(Union({}))})
 
 -- generate Div
 Div(e1,e2,T) = if member(e1/e2,T) then e1/e2 else e1
 
--- generate Modulus
-Modulus(e1,e2,T) = if member(e1%e2,T) then e1%e2 else e1
+-- generate cycle_Kicker_Kicker_Kicker
+cycle_Kicker_Kicker_Kicker = 1
 
 -- generate Neg
 Neg(e1,T) = if member(-e1,T) then -e1 else e1
 
 -- CYCLE DEFINITIONS
--- generate cycle_Sim2DModule_Sim2DModule
-cycle_Sim2DModule_Sim2DModule = 1
--- generate cycle_Kicker_Kicker
-cycle_Kicker_Kicker = 1
--- generate cycle_KickerStm_KickerStm
-cycle_KickerStm_KickerStm = 1
+
+-- generate boolean
+nametype core_boolean = Bool
+
+-- generate Mult
+Mult(e1,e2,T) = if member(e1*e2,T) then e1*e2 else e1
+
+-- generate Modulus
+Modulus(e1,e2,T) = if member(e1%e2,T) then e1%e2 else e1
+
+-- generate Minus
+Minus(e1,e2,T) = if member(e1-e2,T) then e1-e2 else e1
+
