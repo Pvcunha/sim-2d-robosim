@@ -1,57 +1,22 @@
 package Goalie
 
-datatype Point {
-	x: int
-	y: int
-}
-
-datatype GameMode {
-	gameMode: string
-}
-
-datatype WorldModel {
-	gameMode: GameMode
-	goalCenter: Point
-	inGoalCenter : boolean
-	catchable : boolean
-	isInOurPenaltyArea : boolean
-	kickable : boolean
-	tackleProbability : int
-	cyclesToGoalieReachBall : int
-	cyclesToOpponentReachBall : int
-}
-
-interface UpdateWorldI {
-	event updateWorldModel: WorldModel
-}
-
-interface MovementI {
-	doMove( pos : Point )
-	stop ( )
-}
-
-interface CatchI {
-	doCatch()
-}
-
-interface TackleI {
-	doTackle()
-}
-
 controller Goalie {
-	uses UpdateWorldI 
+	uses server::UpdateWorldModelGoalieI 
 	
 	sref stm_ref0 = GoalieStm
 	cycleDef cycle == 1
-	connection Goalie on updateWorldModel to stm_ref0 on updateWorldModel
-	requires MovementI requires CatchI requires TackleI
+	connection Goalie on updateWorldModelGoalie to stm_ref0 on updateWorldModelGoalie
+	requires server::MovementI requires server::CatchI requires server::TackleI requires server::ClearBallI requires server::BodyInterceptI
 }
 
-
 stm GoalieStm {
-	var wm : WorldModel
-	input context {  uses UpdateWorldI }
-	output context { requires MovementI requires CatchI requires TackleI }
+	var wm : server::WorldModel
+	var insideGoalieArea : boolean
+	var bodyInterceptAct : boolean
+	var isTacklePossible : boolean
+	var blockPoint : server::Point
+	input context {  uses server::UpdateWorldModelGoalieI  }
+	output context { requires server::MovementI requires server::CatchI requires server::TackleI requires server::ClearBallI requires server::BodyInterceptI }
 	cycleDef cycle == 1
 	
 	initial i0
@@ -59,19 +24,24 @@ stm GoalieStm {
 state SUpdateWorldModel {
 	}
 	junction j0
-	state SGoToGoal {
-		entry $ doMove ( wm . goalCenter )
-	}
-	junction j1
+
 	state SdoCatch {
+		entry insideGoalieArea = isInOurPenaltyArea ( wm . ball )
 	}
-	junction j2
+
 	state SClearBall {
 	}
 	state SdoTackle {
+		entry isTacklePossible = checkTackle (wm . tackleProbability)
 	}
 	state sBodyIntercept {
+		entry bodyInterceptAct = checkBody (wm.ball); blockPoint = calculateBlockPoint(wm.ball, wm.goalPosition)
 	}
+	junction j3
+	junction j4
+	junction j5
+	junction j6
+	junction j7
 	transition t0 {
 		from i0
 		to SUpdateWorldModel
@@ -79,82 +49,99 @@ state SUpdateWorldModel {
 	transition t1 {
 		from SUpdateWorldModel
 		to SUpdateWorldModel
-		condition not $ updateWorldModel
+		condition not $ updateWorldModelGoalie
 		action exec
 	}
 	transition t2 {
 		from SUpdateWorldModel
 		to j0
-		condition $ updateWorldModel ? wm
+		condition $ updateWorldModelGoalie ? wm
 	}
 	transition t3 {
 		from j0
 		to f0
-		condition wm . gameMode . gameMode != "Play on"
+		condition wm . gameMode != "Play on"
 	}
 	transition t4 {
 		from j0
-		to SGoToGoal
-		condition wm . gameMode . gameMode == "Penalty Setup" \/ wm . gameMode . gameMode == "Penalty Ready" \/ wm . gameMode . gameMode == "Penalty Score" \/ wm . gameMode . gameMode == "Penalty Miss"
+		to SdoCatch
+		condition wm . gameMode == "Play on"
 	}
-transition t5 {
-		from SGoToGoal
-		to j1
-	}
-	transition t6 {
-		from j1
+transition t8 {
+		from j3
 		to SUpdateWorldModel
-		condition not wm . inGoalCenter
 		action exec
 	}
-transition t7 {
-		from j1
-		to SdoCatch
-		condition wm . inGoalCenter /\ wm . catchable /\ wm . isInOurPenaltyArea
-	}
-	transition t8 {
+	transition t5 {
 		from SdoCatch
-		to SUpdateWorldModel
+		to j4
 	}
-	transition t9 {
-		from j1
-		to j2
-		condition not wm . catchable \/ not wm . isInOurPenaltyArea
+	transition t13 {
+		from j4
+		to j3
+		condition wm . catchable /\ insideGoalieArea
+		action $ doCatch ( )
+	}
+transition t14 {
+		from j4
+		to SClearBall
+		condition not ( wm . catchable /\ insideGoalieArea )
+	}
+transition t15 {
+		from SClearBall
+		to j5
+	}
+	transition t16 {
+		from j5
+		to j3
+		condition wm . isKickable
+		action $ doClearBall ( )
+	}
+	transition t17 {
+		from j5
+		to SdoTackle
+		condition not wm . isKickable
+	}
+	transition t6 {
+		from SdoTackle
+		to j6
 	}
 	transition t10 {
-		from j2
-		to SClearBall
-	condition wm . kickable
+		from j6
+		to j3
+		condition isTacklePossible
+		action $ doTackle ( )
+	}
+	transition t18 {
+		from j6
+		to sBodyIntercept
+		condition 
+	not isTacklePossible
+	}
+	transition t7 {
+		from sBodyIntercept
+		to j7
 	}
 	transition t11 {
-		from j2
-		to SdoTackle
-	condition wm . tackleProbability >= 30
+		from j7
+		to j3
+		condition bodyInterceptAct
+		action $ doBodyIntercept ( )
 	}
-transition t12 {
-		from j2
-		to sBodyIntercept
-		condition wm . cyclesToGoalieReachBall - 1 <= wm . cyclesToOpponentReachBall
+	transition t9 {
+		from j7
+		to j3
+		condition 
+		not bodyInterceptAct
+		action 
+	$  doMove ( blockPoint )
 	}
-} 
-
-
-module Sim2DModule {
-	robotic platform Servidor {
-		provides MovementI
-		provides CatchI
-		provides TackleI
-		uses UpdateWorldI 
-	}
-	
-	cref ctrl_ref0 = Goalie
-	cycleDef cycle == 1
-	connection Servidor on updateWorldModel to ctrl_ref0 on updateWorldModel ( _async )
 }
 
-
-
-
+function checkBody(ball : server::Point) : boolean {}
+function isInOurPenaltyArea(ball : server::Point) : boolean { }
+function checkTackle(prob : real) : boolean { }
+function calculateBlockPoint(ball : server::Point , goalPos : server::Point) : server::Point { }
 
 
 

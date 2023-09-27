@@ -10,6 +10,15 @@ datatype WorldModel {
 	gameMode: string
 	isKickable: boolean
 	ball: Point
+	goalCenter: Point
+	inGoalCenter : boolean
+	catchable : boolean
+	isInOurPenaltyArea : boolean
+	tackleProbability : real
+	goalPosition : Point
+	
+	cyclesToGoalieReachBall : int
+	cyclesToOpponentReachBall : int
 }
 
 interface UpdateWorldModelGoalieI {
@@ -31,11 +40,30 @@ interface ShootI {
 	doShoot()
 }
 
+interface CatchI {
+	doCatch()
+}
+
+interface TackleI {
+	doTackle()
+}
+
+interface ClearBallI {
+	doClearBall()
+}
+
+interface BodyInterceptI {
+	doBodyIntercept()
+}
+
 
 module Sim2DModule {
 	robotic platform Servidor {
 		provides MovementI
 		provides ShootI
+		provides CatchI
+		provides TackleI
+		provides ClearBallI
 		
 		uses UpdateWorldModelKickerI 
 		uses UpdateWorldModelGoalieI
