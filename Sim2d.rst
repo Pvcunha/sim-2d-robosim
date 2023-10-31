@@ -73,5 +73,7 @@ module Sim2DModule {
 	cycleDef cycle == 1
 
 	connection Servidor on updateWorldModelKicker to ctrl_ref0 on updateWorldModelKicker ( _async )
+connection Servidor on updateWorldModelGoalie to ctrl_ref1 on updateWorldModelGoalie ( _async )
+	cref ctrl_ref1 = Goalie::Goalie
 }
 
