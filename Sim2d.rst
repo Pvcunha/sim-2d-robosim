@@ -64,6 +64,7 @@ module Sim2DModule {
 		provides CatchI
 		provides TackleI
 		provides ClearBallI
+		provides BodyInterceptI
 		
 		uses UpdateWorldModelKickerI 
 		uses UpdateWorldModelGoalieI
