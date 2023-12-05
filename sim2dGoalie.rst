@@ -1,13 +1,5 @@
 package Goalie
 
-controller Goalie {
-	uses server::UpdateWorldModelGoalieI 
-	
-	sref stm_ref0 = GoalieStm
-	cycleDef cycle == 1
-	connection Goalie on updateWorldModelGoalie to stm_ref0 on updateWorldModelGoalie
-	requires server::MovementI requires server::CatchI requires server::TackleI requires server::ClearBallI requires server::BodyInterceptI
-}
 
 stm GoalieStm {
 	var wm : server::WorldModel

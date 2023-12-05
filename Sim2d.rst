@@ -56,6 +56,27 @@ interface BodyInterceptI {
 	doBodyIntercept()
 }
 
+controller Controller {
+	uses UpdateWorldModelKickerI
+	uses UpdateWorldModelGoalieI
+	
+	
+	requires MovementI 
+	requires CatchI 
+	requires TackleI 
+	requires ClearBallI 
+	requires BodyInterceptI
+	requires ShootI 
+	
+	sref stm_ref0 = kicker::KickerStm
+	sref stm_ref1 = Goalie::GoalieStm
+	
+	connection Controller on updateWorldModelGoalie to stm_ref1 on updateWorldModelGoalie
+	connection Controller on updateWorldModelKicker to stm_ref0 on updateWorldModelKicker
+	
+	cycleDef cycle == 1
+}
+
 
 module Sim2DModule {
 	robotic platform Servidor {
@@ -69,12 +90,12 @@ module Sim2DModule {
 		uses UpdateWorldModelKickerI 
 		uses UpdateWorldModelGoalieI
 	}
-
-	cref ctrl_ref0 = kicker::Kicker
+	
+	cref ctrl_ref = Controller
 	cycleDef cycle == 1
+	connection Servidor on updateWorldModelKicker to ctrl_ref on updateWorldModelKicker ( _async )
+	connection Servidor on updateWorldModelGoalie to ctrl_ref on updateWorldModelGoalie ( _async )
+	
 
-	connection Servidor on updateWorldModelKicker to ctrl_ref0 on updateWorldModelKicker ( _async )
-connection Servidor on updateWorldModelGoalie to ctrl_ref1 on updateWorldModelGoalie ( _async )
-	cref ctrl_ref1 = Goalie::Goalie
 }
 

@@ -1,15 +1,5 @@
 package kicker
 
-controller Kicker {
-	uses server::UpdateWorldModelKickerI 
-
-	sref stm_ref0 = kicker::KickerStm
-	cycleDef cycle == 1
-
-	connection Kicker on updateWorldModelKicker to stm_ref0 on updateWorldModelKicker
-requires server::MovementI requires server::ShootI 
-}
-
 stm KickerStm {
 	var wm : server::WorldModel
 	var canShoot : boolean
