@@ -29,6 +29,9 @@ interface UpdateWorldModelKickerI {
 	event updateWorldModelKicker: WorldModel
 }
 
+interface UpdateWorldModelI {
+	event updateWorldModel : WorldModel
+}
 
 interface MovementI {
 	doMove( pos : Point )
@@ -57,9 +60,7 @@ interface BodyInterceptI {
 }
 
 controller Controller {
-	uses UpdateWorldModelKickerI
-	uses UpdateWorldModelGoalieI
-	
+	uses UpdateWorldModelI
 	
 	requires MovementI 
 	requires CatchI 
@@ -68,13 +69,16 @@ controller Controller {
 	requires BodyInterceptI
 	requires ShootI 
 	
+	
 	sref stm_ref0 = kicker::KickerStm
 	sref stm_ref1 = Goalie::GoalieStm
-	
-	connection Controller on updateWorldModelGoalie to stm_ref1 on updateWorldModelGoalie
-	connection Controller on updateWorldModelKicker to stm_ref0 on updateWorldModelKicker
+	sref stm_ref2 = Router::RouterStm
 	
 	cycleDef cycle == 1
+
+connection Controller on updateWorldModel to stm_ref2 on updateWorldModel
+connection stm_ref2 on updateWorldModelGoalie to stm_ref1 on updateWorldModelGoalie
+	connection stm_ref2 on updateWorldModelKicker to stm_ref0 on updateWorldModelKicker
 }
 
 
@@ -87,14 +91,12 @@ module Sim2DModule {
 		provides ClearBallI
 		provides BodyInterceptI
 		
-		uses UpdateWorldModelKickerI 
-		uses UpdateWorldModelGoalieI
+		uses UpdateWorldModelI
 	}
 	
 	cref ctrl_ref = Controller
 	cycleDef cycle == 1
-	connection Servidor on updateWorldModelKicker to ctrl_ref on updateWorldModelKicker ( _async )
-	connection Servidor on updateWorldModelGoalie to ctrl_ref on updateWorldModelGoalie ( _async )
+	connection Servidor on updateWorldModel to ctrl_ref on updateWorldModel ( _async )
 	
 
 }
