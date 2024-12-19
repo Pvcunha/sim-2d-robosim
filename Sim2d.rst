@@ -21,6 +21,7 @@ datatype WorldModel {
 	cyclesToOpponentReachBall : int
 }
 
+
 interface UpdateWorldModelGoalieI {
 	event updateWorldModelGoalie: WorldModel
 }

@@ -1,8 +1,10 @@
 package kicker
 
+
 stm KickerStm {
 	var wm : server::WorldModel
 	var canShoot : boolean
+	var isKickable : boolean
 	input context {  uses server::UpdateWorldModelKickerI }
 	output context { requires server::ShootI requires server::MovementI }
 	cycleDef cycle == 1
@@ -10,6 +12,7 @@ stm KickerStm {
 	final f0
 
 	state SGoToBall {
+		entry isKickable = isKickable()
 	}
 
 	junction j0
@@ -29,7 +32,7 @@ stm KickerStm {
 	transition t4 {
 		from j0
 		to SShoot
-	condition wm . isKickable
+	condition isKickable
 	}
 	transition t0 {
 		from i0
@@ -86,8 +89,8 @@ transition t3 {
 		from j0
 		to j1
 		condition 
-		
-		not wm . isKickable
+	
+		not isKickable
 		action $ doMove ( wm . ball )
 	}
 transition t6 {
@@ -97,5 +100,7 @@ transition t6 {
 		action $ doShoot ( )
 	}
 }
+
+function isKickable() : boolean {}
 
 function canShootToGoal(): boolean { }
