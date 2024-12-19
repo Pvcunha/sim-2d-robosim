@@ -16,8 +16,7 @@ stm Router {
 	output context { requires iOperations }
 	cycleDef cycle == 1
 	initial i0
-	final f0
-	
+
 	state receiveWorldModel {
 	}
 
@@ -28,11 +27,9 @@ stm Router {
 	transition t1 {
 		from receiveWorldModel
 		to receiveWorldModel
-		condition $ updateWorldModel ? wm
-	}
-	transition t2 {
-		from receiveWorldModel
-		to f0
+		condition 
+	$  updateWorldModel ? wm
+		action if wm . playerType == 0 then operations::doGoalie(wm) else operations::doKicker( wm ) end
 	}
 }
 

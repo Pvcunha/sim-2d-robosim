@@ -16,7 +16,7 @@ datatype WorldModel {
 	isInOurPenaltyArea : boolean
 	tackleProbability : real
 	goalPosition : Point
-	
+	playerType: int
 	cyclesToGoalieReachBall : int
 	cyclesToOpponentReachBall : int
 }
