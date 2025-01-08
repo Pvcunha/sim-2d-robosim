@@ -1,35 +1,47 @@
 package general
 
 interface iOperations {
-	doGoalie(wm: server::WorldModel)
-	doKicker(wm: server::WorldModel)
+	doGoalie(agent: server::PlayerAgent)
+	doKicker(agent: server::PlayerAgent)
+}
+ 
+interface rcvMessage {
+	event updatePlayerAgent : server::PlayerAgent
 }
 
-interface UpdateWorldModelI {
-	event updateWorldModel : server::WorldModel
-}
-
-stm Router {
-	var foo : string
-	var wm : server::WorldModel
-	input context { uses server::UpdateWorldModelI }
+stm SamplePlayer {
+	var agent: server::PlayerAgent
+	input context { uses rcvMessage }
 	output context { requires iOperations }
 	cycleDef cycle == 1
 	initial i0
 
-	state receiveWorldModel {
+	state receivePlayerAgent {
+	}
+	state CallAgent {
+		entry if agent . goalie then operations::doGoalie ( agent ) else operations::doKicker ( agent ) end
 	}
 
 	transition t0 {
 		from i0
-		to receiveWorldModel
+		to receivePlayerAgent
 	}
 	transition t1 {
-		from receiveWorldModel
-		to receiveWorldModel
+		from receivePlayerAgent
+		to CallAgent
 		condition 
-	$  updateWorldModel ? wm
-		action if wm . playerType == 0 then operations::doGoalie(wm) else operations::doKicker( wm ) end
+	$  updatePlayerAgent ? agent
+		
+	}
+transition t2 {
+		from receivePlayerAgent
+		to receivePlayerAgent
+		condition not $  updatePlayerAgent
+		action exec
+	}
+transition t3 {
+		from CallAgent
+		to receivePlayerAgent
 	}
 }
 

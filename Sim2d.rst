@@ -21,6 +21,7 @@ datatype WorldModel {
 	cyclesToOpponentReachBall : int
 }
 
+datatype PlayerAgent { worldModel : server::WorldModel goalie : boolean }
 
 interface UpdateWorldModelGoalieI {
 	event updateWorldModelGoalie: WorldModel

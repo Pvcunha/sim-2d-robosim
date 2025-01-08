@@ -1,6 +1,6 @@
 package operations
 
-operation DoGoalie ( wm: server::WorldModel) {
+operation doGoalie ( agent: server::PlayerAgent ) {
 	var insideGoalieArea : boolean
 	var bodyInterceptAct : boolean
 	var isTacklePossible : boolean
@@ -9,7 +9,7 @@ operation DoGoalie ( wm: server::WorldModel) {
 	final f0
 
 	state SdoCatch {
-		entry insideGoalieArea = isInOurPenaltyArea ( wm . ball )
+		entry insideGoalieArea = isInOurPenaltyArea ( agent . worldModel . ball )
 	}
 	
 	state SClearBall {
@@ -21,11 +21,11 @@ operation DoGoalie ( wm: server::WorldModel) {
 	
 	junction j2
 	state SdoTackle {
-		entry isTacklePossible = checkTackle ( wm . tackleProbability )
+		entry isTacklePossible = checkTackle ( agent . worldModel . tackleProbability )
 	}
 	junction j3
 	state doMove {
-		entry blockPoint = calculateBlockPoint ( wm . ball , wm . goalPosition )
+		entry blockPoint = calculateBlockPoint ( agent . worldModel . ball , agent . worldModel . goalPosition )
 	}
 	
 	transition t0 {
@@ -41,13 +41,13 @@ operation DoGoalie ( wm: server::WorldModel) {
 	transition t2 {
 		from j0
 		to j1
-	condition wm . catchable /\ insideGoalieArea
+	condition agent . worldModel . catchable /\ insideGoalieArea
 		action $ doCatch ( )
 	}
 	transition t3 {
 		from j0
 		to SClearBall
-		condition not ( wm . catchable /\ insideGoalieArea )
+		condition not ( agent . worldModel . catchable /\ insideGoalieArea )
 	}
 	transition t4 {
 		from j1
@@ -61,13 +61,13 @@ operation DoGoalie ( wm: server::WorldModel) {
 	transition t6 {
 		from j2
 		to j1
-		condition wm . isKickable
+		condition agent . worldModel . isKickable
 		action $ doClearBall ( )
 	}
 	transition t7 {
 		from j2
 		to SdoTackle
-		condition not wm . isKickable
+		condition not agent . worldModel . isKickable
 	}
 	transition t8 {
 		from SdoTackle
@@ -90,7 +90,7 @@ operation DoGoalie ( wm: server::WorldModel) {
 		action $ doMove ( blockPoint )
 	}
 	
-	input context {  uses server::UpdateWorldModelGoalieI  }
+	input context {  }
 	output context { requires server::MovementI requires server::CatchI requires server::TackleI requires server::ClearBallI requires server::BodyInterceptI }
 }
 
