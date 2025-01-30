@@ -42,6 +42,7 @@ transition t2 {
 transition t3 {
 		from CallAgent
 		to receivePlayerAgent
+	action exec
 	}
 }
 

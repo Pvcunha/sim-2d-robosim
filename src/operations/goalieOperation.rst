@@ -9,7 +9,7 @@ operation doGoalie ( agent: server::PlayerAgent ) {
 	final f0
 
 	state SdoCatch {
-		entry insideGoalieArea = isInOurPenaltyArea ( agent . worldModel . ball )
+		entry insideGoalieArea = isInOurPenaltyArea ( agent )
 	}
 	
 	state SClearBall {
@@ -25,7 +25,7 @@ operation doGoalie ( agent: server::PlayerAgent ) {
 	}
 	junction j3
 	state doMove {
-		entry blockPoint = calculateBlockPoint ( agent . worldModel . ball , agent . worldModel . goalPosition )
+		entry blockPoint = calculateBlockPoint ( agent )
 	}
 	
 	transition t0 {
@@ -48,11 +48,6 @@ operation doGoalie ( agent: server::PlayerAgent ) {
 		from j0
 		to SClearBall
 		condition not ( agent . worldModel . catchable /\ insideGoalieArea )
-	}
-	transition t4 {
-		from j1
-		to f0
-		action exec
 	}
 	transition t5 {
 		from SClearBall
@@ -90,11 +85,16 @@ operation doGoalie ( agent: server::PlayerAgent ) {
 		action $ doMove ( blockPoint )
 	}
 	
+	transition t4 {
+		from j1
+		to f0
+	}
+	
 	input context {  }
 	output context { requires server::MovementI requires server::CatchI requires server::TackleI requires server::ClearBallI requires server::BodyInterceptI }
 }
 
-function checkBody(ball : server::Point) : boolean {}
-function isInOurPenaltyArea(ball : server::Point) : boolean { }
+function checkBody(agent: server::PlayerAgent) : boolean {}
+function isInOurPenaltyArea(agent: server::PlayerAgent) : boolean { }
 function checkTackle(prob : real) : boolean { }
-function calculateBlockPoint(ball : server::Point , goalPos : server::Point) : server::Point { }
+function calculateBlockPoint(agent: server::PlayerAgent) : server::Point { }

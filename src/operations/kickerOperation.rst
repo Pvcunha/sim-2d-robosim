@@ -16,7 +16,6 @@ operation doKicker ( agent : server::PlayerAgent ) {
 	}
 
 	state SDribble {
-		entry $ doDribble ( )
 	}
 
 	junction j2
@@ -42,22 +41,7 @@ operation doKicker ( agent : server::PlayerAgent ) {
 		from SShoot
 		to j2
 	}
-
-	/*transition t3 {
-		from j0
-		to j1
-		condition 
-	
-		not isKickable
-		action $ doMove ( agent . worldModel . ball )
-	}
-	transition t6 {
-		from j2
-		to j1
-		condition canShoot
-		action $ doShoot ( )
-	}*/
-transition t0 {
+	transition t0 {
 		from i0
 		to SGoToBall
 	}
@@ -80,6 +64,7 @@ transition t0 {
 	transition t8 {
 		from SDribble
 		to j1
+	action $ doDribble ( )
 	}
 	input context {  }
 	output context { requires server::ShootI requires server::MovementI }
